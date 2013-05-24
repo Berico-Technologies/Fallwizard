@@ -1,5 +1,8 @@
 # Fallwizard
 
+[![Build Status](https://travis-ci.org/tlpinney/Fallwizard.png)](https://travis-ci.org/tlpinney/Fallwizard)
+
+
 Leveraging the best of the Spring Framework and Dropwizard.
 
 __Maven Dependency__
