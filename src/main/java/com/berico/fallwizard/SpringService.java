@@ -24,6 +24,7 @@ import com.yammer.metrics.core.HealthCheck;
 
 import org.eclipse.jetty.util.component.LifeCycle;
 
+
 /**
  * Service abstraction that injects Spring managed components into
  * the Dropwizard environment.
@@ -61,8 +62,8 @@ public abstract class SpringService<T extends SpringConfiguration> extends Servi
 		if (configuration.getBeanProfiles() != null){
 			
 			logger.info("Using profiles: {}", join(configuration.getBeanProfiles(), ", "));
-			
-			applicationContext.getEnvironment()
+
+            applicationContext.getEnvironment()
 				.setActiveProfiles(configuration.getBeanProfiles());
 		}
 		
@@ -83,7 +84,7 @@ public abstract class SpringService<T extends SpringConfiguration> extends Servi
         registerProviders(environment);
         registerResources(environment);
 	}
-	
+
 	/**
 	 * Little utility to concatenate strings with a separator.
 	 * @param strings Strings to join
