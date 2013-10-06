@@ -4,6 +4,6 @@ build/
 .classpath
 .project
 .gradle
-
+.settings/
 fallwizard.iml
 

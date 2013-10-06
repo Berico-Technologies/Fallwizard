@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.filter.DelegatingFilterProxy;
 
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.model.Parameter;
@@ -49,13 +50,8 @@ public class SpringSecurityAuthProvider implements InjectableProvider<Auth, Para
 	}
 	
 	protected void registerSpringSecurityFilters(Environment environment){
-		
-		SecurityFilterChain filterChain = applicationContext.getBean(SecurityFilterChain.class);
-		
-		for (Filter filter : filterChain.getFilters()){
-			
-			environment.addFilter(filter, "/*");
-		}
+		DelegatingFilterProxy proxy = new DelegatingFilterProxy();
+		environment.addFilter(DelegatingFilterProxy.class, "/*").setName("springSecurityFilterChain");
 	}
 	
 	@Override

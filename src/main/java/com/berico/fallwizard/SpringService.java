@@ -7,12 +7,16 @@ package com.berico.fallwizard;
 
 import java.util.Map;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import com.berico.fallwizard.auth.SpringSecurityAuthProvider;
 import com.yammer.dropwizard.Service;
@@ -71,7 +75,28 @@ public abstract class SpringService<T extends SpringConfiguration> extends Servi
 		
 		// If we should use Spring Security
 		if (configuration.shouldUseSpringSecurity()){
-		
+			final XmlWebApplicationContext wctx = new XmlWebApplicationContext();
+			wctx.setParent(applicationContext);
+			wctx.setConfigLocation("");
+			wctx.refresh();
+			environment.addServletListeners(new ServletContextListener() {
+
+				@Override
+				public void contextInitialized(ServletContextEvent servCtx) {
+					servCtx.getServletContext()
+							.setAttribute(
+									WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE,
+									wctx);
+					wctx.setServletContext(servCtx.getServletContext());
+
+				}
+
+				@Override
+				public void contextDestroyed(ServletContextEvent arg0) {
+					// TODO Auto-generated method stub
+
+				}
+			});
 			// Register the Spring Security Auth Provider
 			new SpringSecurityAuthProvider(applicationContext)
 				.registerProvider(environment);
