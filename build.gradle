@@ -7,25 +7,17 @@ group = 'com.bericotech'
 
 repositories {
     mavenCentral()
-    maven {
-        url = "http://maven.springframework.org/release"
-    }
-    maven {
-        url = "http://maven.springframework.org/milestone"
-    }
-    maven {
-        url = "http://maven.springframework.org/snapshot"
-    }
 }
 
 dependencies {
 
-    ext.dropwizardversion = '0.6.2'
+    ext.dropwizardversion = '0.7.0'
     ext.springsecurityversion = '3.2.0.RELEASE'
     ext.springversion = '3.2.2.RELEASE'
 
-    compile("com.yammer.dropwizard:dropwizard-core:${ext.dropwizardversion}")
-    compile("com.yammer.dropwizard:dropwizard-auth:${ext.dropwizardversion}")
+    compile("io.dropwizard:dropwizard-core:${ext.dropwizardversion}")
+    compile("io.dropwizard:dropwizard-auth:${ext.dropwizardversion}")
+    compile("io.dropwizard:dropwizard-configuration:${ext.dropwizardversion}")
     compile("org.springframework.security:spring-security-core:${ext.springsecurityversion}")
     compile("org.springframework.security:spring-security-web:${ext.springsecurityversion}")
     compile("org.springframework.security:spring-security-config:${ext.springsecurityversion}")

@@ -1,9 +1,8 @@
 package com.bericotech.fallwizard.configuration;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.dropwizard.config.Configuration;
+import io.dropwizard.Configuration;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * Spring Configuration, which determines whether to use
