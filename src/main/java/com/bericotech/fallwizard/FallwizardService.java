@@ -4,12 +4,12 @@ import com.bericotech.fallwizard.auth.SpringSecurityAuthProvider;
 import com.bericotech.fallwizard.configuration.FallwizardConfiguration;
 import com.bericotech.fallwizard.configuration.SpringConfiguration;
 import com.bericotech.fallwizard.configuration.SpringPropertyPlaceholderConfigurerConfiguration;
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.lifecycle.Managed;
-import com.yammer.dropwizard.tasks.Task;
-import com.yammer.metrics.core.HealthCheck;
+import com.codahale.metrics.health.HealthCheck;
+import io.dropwizard.Application;
+import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.servlets.tasks.Task;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Justin McCune  (update to 1.2)
  * Date: 12/14/13
  */
-public class FallwizardService<T extends FallwizardConfiguration> extends Service<T> {
+public class FallwizardService<T extends FallwizardConfiguration> extends Application<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(FallwizardService.class);
 
@@ -42,19 +42,16 @@ public class FallwizardService<T extends FallwizardConfiguration> extends Servic
     public static String DEFAULT_RESOURCE_TYPE = "file";
 
     // Instantiate the Spring Application Context
-    protected GenericXmlApplicationContext applicationContext = new GenericXmlApplicationContext();;
+    protected GenericXmlApplicationContext applicationContext = new GenericXmlApplicationContext();
 
     @Override
-    public void initialize(Bootstrap<T> bootstrap) {}
+    public void initialize(Bootstrap<T> bootstrap) {
+    }
 
     @Override
     public void run(T configuration, Environment environment) throws Exception {
 
         logger.info("Starting up FallWizardService");
-
-        //The FallWizard springConfig object has all the information we need about
-        // Spring configuration.
-        SpringConfiguration springConfig = configuration.getSpringConfiguration();
 
         // Populate the applicationContext based on the Spring Configuration
         initSpringConfig(configuration.getSpringConfiguration(),environment);
@@ -115,7 +112,7 @@ public class FallwizardService<T extends FallwizardConfiguration> extends Servic
             wctx.setParent(applicationContext);
             wctx.setConfigLocation("");
             wctx.refresh();
-            environment.addServletListeners(new ServletContextListener() {
+            environment.servlets().addServletListeners(new ServletContextListener() {
 
                 @Override
                 public void contextInitialized(ServletContextEvent servCtx) {
@@ -184,9 +181,7 @@ public class FallwizardService<T extends FallwizardConfiguration> extends Servic
         for (String beanName : beansWithAnnotation.keySet()) {
 
             Object resource = beansWithAnnotation.get(beanName);
-
-            environment.addResource(resource);
-
+            environment.jersey().register(resource);
             logger.info("Registering resource : " + resource.getClass().getName());
         }
     }
@@ -202,8 +197,7 @@ public class FallwizardService<T extends FallwizardConfiguration> extends Servic
         for (String beanName : beansOfType.keySet()) {
 
             Managed managed = beansOfType.get(beanName);
-
-            environment.manage(managed);
+            environment.lifecycle().manage(managed);
 
             logger.info("Registering managed: " + managed.getClass().getName());
         }
@@ -221,7 +215,7 @@ public class FallwizardService<T extends FallwizardConfiguration> extends Servic
 
             LifeCycle lifeCycle = beansOfType.get(beanName);
 
-            environment.manage(lifeCycle);
+            environment.lifecycle().manage(lifeCycle);
 
             logger.info("Registering lifeCycle: " + lifeCycle.getClass().getName());
         }
@@ -238,8 +232,7 @@ public class FallwizardService<T extends FallwizardConfiguration> extends Servic
         for (String beanName : beansOfType.keySet()) {
 
             Task task = beansOfType.get(beanName);
-
-            environment.addTask(task);
+            environment.admin().addTask(task);
 
             logger.info("Registering task: " + task.getClass().getName());
         }
@@ -253,13 +246,9 @@ public class FallwizardService<T extends FallwizardConfiguration> extends Servic
 
         final Map<String, HealthCheck> beansOfType = applicationContext.getBeansOfType(HealthCheck.class);
 
-        for (String beanName : beansOfType.keySet()) {
-
-            HealthCheck healthCheck = beansOfType.get(beanName);
-
-            environment.addHealthCheck(healthCheck);
-
-            logger.info("Registering healthCheck: " + healthCheck.getClass().getName());
+        for (Map.Entry<String, HealthCheck> entry : beansOfType.entrySet()) {
+            environment.healthChecks().register(entry.getKey(),entry.getValue());
+            logger.info("Registering healthCheck: " + entry.getValue().getClass().getName());
         }
     }
 
@@ -275,9 +264,8 @@ public class FallwizardService<T extends FallwizardConfiguration> extends Servic
 
             Object provider = beansWithAnnotation.get(beanName);
 
-            environment.addProvider(provider);
-
-            logger.info("Registering provider : " + provider.getClass().getName());
+            //environment.addProvider(provider);
+            //logger.info("Registering provider : " + provider.getClass().getName());
         }
     }
 }

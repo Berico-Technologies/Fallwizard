@@ -2,13 +2,11 @@ package com.bericotech.fallwizard;
 
 import com.bericotech.fallwizard.configuration.FallwizardConfiguration;
 import com.bericotech.fallwizard.configuration.SpringConfiguration;
+import io.dropwizard.cli.ConfiguredCommand;
+import io.dropwizard.setup.Bootstrap;
+import net.sourceforge.argparse4j.inf.Namespace;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-
-import net.sourceforge.argparse4j.inf.Namespace;
-
-import com.yammer.dropwizard.cli.ConfiguredCommand;
-import com.yammer.dropwizard.config.Bootstrap;
 
 public abstract class FallwizardConfiguredCommand extends ConfiguredCommand<FallwizardConfiguration> {
 

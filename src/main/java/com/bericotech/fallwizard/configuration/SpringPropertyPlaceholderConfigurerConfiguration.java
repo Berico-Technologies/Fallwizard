@@ -1,7 +1,7 @@
 package com.bericotech.fallwizard.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.dropwizard.config.Configuration;
+import io.dropwizard.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -44,7 +44,7 @@ public class SpringPropertyPlaceholderConfigurerConfiguration extends Configurat
     /**
      * Are properties file resource specifications optional?
      * (E.g. if not found is it an error?)
-     * * Defaults to normal behavior of the configurer if not specified.
+     * * Defaults to nor+mal behavior of the configurer if not specified.
      */
     @Valid
     @JsonProperty
@@ -83,7 +83,7 @@ public class SpringPropertyPlaceholderConfigurerConfiguration extends Configurat
     public PropertyPlaceholderConfigurer createPlaceholderConfigurer(GenericApplicationContext applicationContext) {
 
         // -- Create the object --
-        PropertyPlaceholderConfigurer implementation = null;
+        PropertyPlaceholderConfigurer implementation;
         try {
             Class<?> classType = this.getClass().getClassLoader().loadClass(propertyPlaceholderClassName);
             implementation = (PropertyPlaceholderConfigurer) classType.newInstance();
@@ -116,7 +116,7 @@ public class SpringPropertyPlaceholderConfigurerConfiguration extends Configurat
 
         // - Locations -
         if (locations!=null && !locations.isEmpty()) {
-            List<Resource> resourceLocations = new ArrayList<Resource>();
+            List<Resource> resourceLocations = new ArrayList<>();
             for (String locationSpec : locations) {
                 logger.info(">>  Location Specification: "+locationSpec);
                 Resource resource = applicationContext.getResource(locationSpec);
