@@ -46,13 +46,12 @@ public class FallwizardApplication<T extends FallwizardConfiguration> extends Ap
     protected GenericXmlApplicationContext applicationContext = new GenericXmlApplicationContext();
 
     @Override
-    public void initialize(Bootstrap<T> bootstrap) {
-        applicationContext.getBeanFactory().registerResolvableDependency(MetricRegistry.class, bootstrap.getMetricRegistry());
-    }
+    public void initialize(Bootstrap<T> bootstrap) {}
 
     @Override
     public void run(T configuration, Environment environment) throws Exception {
 
+        applicationContext.getBeanFactory().registerResolvableDependency(MetricRegistry.class, environment.metrics());
         logger.info("Starting up FallWizardService");
 
         // Populate the applicationContext based on the Spring Configuration
